@@ -1,8 +1,8 @@
-{ "growthTimes": { "P. aeruginosa": 0, "K. pneumoniae": 0, "E. coli": 0, "S. aureus": 0,
-  "B. subtilis": 0, "E. faecalis": 0, "C. difficile": 0, "M. smegmatis": 0, 
-  "M. fortuitum": 0, "M. marinum": 0, "M. tuberculosis": 0, "M. bovis": 0,
-  "M. abscessus": 0, "C. diptheriae": 0, "C. xerosis": 0, "C. amycolatum": 0,
-  "C. glutamicum": 0},
+{ "growthTimes": { "P. aeruginosa": 140, "K. pneumoniae": 120, "E. coli": 80, "S. aureus": 60,
+  "B. subtilis": 140, "E. faecalis": 120, "C. difficile": 120, "M. smegmatis": 240, 
+  "M. fortuitum": 255, "M. marinum": 450, "M. tuberculosis": 2880, "M. bovis": 2880,
+  "M. abscessus": 240, "C. diptheriae": 130, "C. xerosis": 180, "C. amycolatum": 180,
+  "C. glutamicum": 180},
 
 "fluorescence": {
   "P. aeruginosa": {
