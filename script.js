@@ -18,31 +18,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-function buildRows(b1, b2) {
-  const drugs = Object.keys(tableData[b1]);
+  function buildRows(b1, b2) {
+    const drugs = Object.keys(tableData[b1]);
 
-  const rows = drugs.map(drug => {
-    const v1 = Number(tableData[b1][drug]);
-    const v2 = Number(tableData[b2][drug]);
+    const rows = drugs.map(drug => {
+      const v1 = Number(tableData[b1][drug]);
+      const v2 = Number(tableData[b2][drug]);
 
-    const maxVal = Math.max(v1, v2);
-    const minVal = Math.min(v1, v2);
+      const maxVal = Math.max(v1, v2);
+      const minVal = Math.min(v1, v2);
 
-    const foldChange = minVal === 0 ? Infinity : maxVal / minVal;
-    const highlight = foldChange >= 2 ? "highlight" : "";
+      // Fold-change (avoid divide-by-zero)
+      const foldChange = minVal === 0 ? Infinity : maxVal / minVal;
 
-    return {
-      drug,
-      v1,
-      v2,
-      foldChange,
-      highlight
-    };
-  });
+      const highlight = foldChange >= 2 ? "highlight" : "";
 
-  const diffRows = rows.filter(r => r.foldChange >= 2);
-  return { rows, diffRows };
-}
+      return {
+        drug,
+        v1,
+        v2,
+        foldChange,
+        highlight
+      };
+    });
+
+    const diffRows = rows.filter(r => r.foldChange >= 2);
+    return { rows, diffRows };
+  }
 
   function renderTable(b1, b2) {
     const resultDiv = document.getElementById('result');
@@ -82,12 +84,13 @@ function buildRows(b1, b2) {
     toggleBtn.textContent = showAll ? "Show only differences" : "Show all compounds";
   }
 
-  // Compare handler (with safe warning handling)
+  // Unified Compare handler
   document.getElementById('submit').addEventListener('click', () => {
     const b1 = document.getElementById('bacteria1').value;
     const b2 = document.getElementById('bacteria2').value;
-    const warning = document.getElementById('warning'); // may be null
+    const warning = document.getElementById('warning');
 
+    // Prevent comparing the same species
     if (b1 === b2) {
       if (warning) {
         warning.textContent = "Warning: You cannot compare a species to itself.";
