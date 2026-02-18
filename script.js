@@ -80,14 +80,14 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
 
     rowsToShow.forEach(r => {
-      html += `
-        <tr>
-          <td>${r.drug}</td>
-          <td>${r.v1}</td>
-          <td>${r.v2}</td>
-        </tr>
-      `;
-    });
+  html += `
+    <tr class="${r.highlight}">
+      <td>${r.drug}</td>
+      <td>${r.v1}</td>
+      <td>${r.v2}</td>
+    </tr>
+  `;
+});
 
     html += `</table>`;
     resultDiv.innerHTML = html;
