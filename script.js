@@ -64,12 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const gt1 = growthTimes[b1];
     const gt2 = growthTimes[b2];
 
-    html += `
+  html += `
     <p><strong>Recommended individual growth times:</strong> 
-      $<em>{b1}</em> = ${formatHM(gt1)}, 
-      $<em>{b2}</em> = ${formatHM(gt2)}
-      </p>
-    `;
+      <em>${b1}</em> = ${formatHM(gt1)}, 
+      <em>${b2}</em> = ${formatHM(gt2)}
+    </p>
+  `;
 
 
     // Calculated co-culture growth time
