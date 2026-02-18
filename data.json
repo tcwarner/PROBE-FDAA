@@ -4,7 +4,7 @@
   "M. abscessus": 0, "C. diptheriae": 0, "C. xerosis": 0, "C. amycolatum": 0,
   "C. glutamicum": 0}}
 
- "fluorescence": {
+{"fluorescence": {
   "P. aeruginosa": {
     "HADA": "4.30",
     "NADA": "1.08",
