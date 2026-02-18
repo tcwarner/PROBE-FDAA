@@ -6,7 +6,6 @@ async function loadData() {
 
   const bac1 = document.getElementById('bacteria1');
   const bac2 = document.getElementById('bacteria2');
-  const drugSelect = document.getElementById('drug');
 
   const bacteriaList = Object.keys(tableData);
 
@@ -14,48 +13,51 @@ async function loadData() {
   bacteriaList.forEach(bac => {
     const opt1 = document.createElement('option');
     opt1.value = bac;
-    opt1.textContent = bac.replace(/_/g, ' ');
+    opt1.textContent = bac;
     bac1.appendChild(opt1);
 
     const opt2 = document.createElement('option');
     opt2.value = bac;
-    opt2.textContent = bac.replace(/_/g, ' ');
+    opt2.textContent = bac;
     bac2.appendChild(opt2);
   });
-
-  // Populate drug dropdown based on first bacterium
-  function updateDrugList() {
-    const selected = bac1.value;
-    const drugs = Object.keys(tableData[selected]);
-
-    drugSelect.innerHTML = '';
-
-    drugs.forEach(drug => {
-      const option = document.createElement('option');
-      option.value = drug;
-      option.textContent = drug;
-      drugSelect.appendChild(option);
-    });
-  }
-
-  bac1.addEventListener('change', updateDrugList);
-
-  // Trigger initial drug population
-  updateDrugList();
 }
 
 document.getElementById('submit').addEventListener('click', () => {
   const b1 = document.getElementById('bacteria1').value;
   const b2 = document.getElementById('bacteria2').value;
-  const drug = document.getElementById('drug').value;
 
-  const bind1 = tableData?.[b1]?.[drug] ?? "No data";
-  const bind2 = tableData?.[b2]?.[drug] ?? "No data";
+  const drugs = Object.keys(tableData[b1]); // all drugs
 
-  document.getElementById('result').innerHTML = `
-    <strong>${b1.replace(/_/g, ' ')}:</strong> ${bind1}<br>
-    <strong>${b2.replace(/_/g, ' ')}:</strong> ${bind2}
+  let html = `
+    <table>
+      <tr>
+        <th>Drug</th>
+        <th>${b1}</th>
+        <th>${b2}</th>
+      </tr>
   `;
+
+  drugs.forEach(drug => {
+    const v1 = Number(tableData[b1][drug]);
+    const v2 = Number(tableData[b2][drug]);
+
+    const diff = Math.abs(v1 - v2);
+
+    const highlightClass = diff > 1 ? "highlight" : "";
+
+    html += `
+      <tr class="${highlightClass}">
+        <td>${drug}</td>
+        <td>${v1}</td>
+        <td>${v2}</td>
+      </tr>
+    `;
+  });
+
+  html += `</table>`;
+
+  document.getElementById('result').innerHTML = html;
 });
 
 loadData();
