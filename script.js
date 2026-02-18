@@ -94,8 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
       <table>
         <tr>
           <th>FDAA</th>
-          <th>${b1} Incorporation</th>
-          <th>${b2} Incorporation</th>
+          <th>${b1} Relative labeling</th>
+          <th>${b2} Relative labeling</th>
         </tr>
     `;
 
