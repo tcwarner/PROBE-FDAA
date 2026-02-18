@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gt2 = growthTimes[b2];
 
     html += `
-      <p><strong>Growth time:</strong> ${b1} = ${gt1} min, ${b2} = ${gt2} min</p>
+      <p><strong>Recommeded individual growth times:</strong> ${b1} = ${gt1} min, ${b2} = ${gt2} min</p>
     `;
 
     // If no differences exist, show message AND table
