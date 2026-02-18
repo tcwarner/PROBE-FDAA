@@ -36,10 +36,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const v2 = Number(tableData[b2][drug]);
 
       const maxVal = Math.max(v1, v2);
-      const minVal = Math.min(v1, v2);
+const minVal = Math.min(v1, v2);
 
-      const foldChange = minVal === 0 ? Infinity : maxVal / minVal;
-      const highlight = foldChange >= 2 ? "highlight" : "";
+// Fold-change (avoid divide-by-zero)
+const foldChange = minVal === 0 ? Infinity : maxVal / minVal;
+
+// NEW hard-coded rule
+const lowThreshold = Math.SQRT2;   // ~1.414
+const highThreshold = 2.1;
+
+const hardHighlight =
+  (v1 < lowThreshold && v2 > highThreshold) ||
+  (v2 < lowThreshold && v1 > highThreshold);
+
+// Final highlight decision
+const highlight = (foldChange >= 2 || hardHighlight) ? "highlight" : "";
+
 
       return {
         drug,
