@@ -1,10 +1,10 @@
 { "growthTimes": { "P. aeruginosa": 0, "K. pneumoniae": 0, "E. coli": 0, "S. aureus": 0,
-  "B. subtilis": 0, "E. faecalis": 0, "C. difficule": 0, "M. smegmatis": 0, 
+  "B. subtilis": 0, "E. faecalis": 0, "C. difficile": 0, "M. smegmatis": 0, 
   "M. fortuitum": 0, "M. marinum": 0, "M. tuberculosis": 0, "M. bovis": 0,
   "M. abscessus": 0, "C. diptheriae": 0, "C. xerosis": 0, "C. amycolatum": 0,
-  "C. glutamicum": 0}}
+  "C. glutamicum": 0},
 
-{"fluorescence": {
+"fluorescence": {
   "P. aeruginosa": {
     "HADA": "4.30",
     "NADA": "1.08",
