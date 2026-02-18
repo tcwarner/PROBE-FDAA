@@ -105,13 +105,27 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTable(b1, b2);
   });
 
-  document.getElementById('toggle').addEventListener('click', () => {
-    const b1 = document.getElementById('bacteria1').value;
-    const b2 = document.getElementById('bacteria2').value;
+document.getElementById('submit').addEventListener('click', () => {
+  const b1 = document.getElementById('bacteria1').value;
+  const b2 = document.getElementById('bacteria2').value;
+  const warning = document.getElementById('warning');
 
-    showAll = !showAll;
-    renderTable(b1, b2);
-  });
+  // 🚫 PREVENT comparing the same species
+  if (b1 === b2) {
+    warning.textContent = "Warning: You cannot compare a species to itself.";
+    return; // stop here — do NOT build the table
+  }
+
+  // Clear warning if valid
+  warning.textContent = "";
+
+  const { rows, diffRows } = buildRows(b1, b2);
+  lastRows = rows;
+  lastDiffRows = diffRows;
+
+  showAll = false; // default to differences-only
+  renderTable(b1, b2);
+});
 
   loadData();
 });
