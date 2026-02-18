@@ -1,16 +1,3 @@
-<body>
-
-  <!-- all your page content here -->
-  <select id="bacteria1"></select>
-  <select id="bacteria2"></select>
-  <button id="submit">Compare</button>
-  <div id="result"></div>
-
-  <!-- put this LAST, right before </body> -->
-  <script src="script.js"></script>
-</body>
-</html>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,7 +6,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 700px;
+      max-width: 800px;
       margin: 40px auto;
       line-height: 1.6;
     }
@@ -33,6 +20,10 @@
       padding: 8px;
       font-size: 1rem;
     }
+    button {
+      margin-top: 20px;
+      cursor: pointer;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -42,6 +33,9 @@
       border: 1px solid #ccc;
       padding: 8px;
       text-align: center;
+    }
+    th {
+      background-color: #f5f5f5;
     }
     .highlight {
       background-color: #ffdddd;
@@ -63,6 +57,7 @@
 
   <div id="result"></div>
 
+  <!-- IMPORTANT: script goes at the very end of body -->
   <script src="script.js"></script>
 </body>
 </html>
