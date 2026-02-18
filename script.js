@@ -18,30 +18,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function buildRows(b1, b2) {
-    const drugs = Object.keys(tableData[b1]);
+function buildRows(b1, b2) {
+  const drugs = Object.keys(tableData[b1]);
 
-    const rows = drugs.map(drug => {
-      const v1 = Number(tableData[b1][drug]);
-      const v2 = Number(tableData[b2][drug]);
-      const maxVal = Math.max(v1, v2);
-      const minVal = Math.min(v1, v2);
-      const foldChange = minVal === 0 ? Infinity : maxVal / minVal;
-      const highlight = foldChange >= 2 ? 'highlight' : '';
+  const rows = drugs.map(drug => {
+    const v1 = Number(tableData[b1][drug]);
+    const v2 = Number(tableData[b2][drug]);
 
+    const maxVal = Math.max(v1, v2);
+    const minVal = Math.min(v1, v2);
 
-      return {
-        drug,
-        v1,
-        v2,
-        diff,
-        highlight: diff > 1 ? "highlight" : ""
-      };
-    });
+    const foldChange = minVal === 0 ? Infinity : maxVal / minVal;
+    const highlight = foldChange >= 2 ? "highlight" : "";
 
-    const diffRows = rows.filter(r => r.diff > 1);
-    return { rows, diffRows };
-  }
+    return {
+      drug,
+      v1,
+      v2,
+      foldChange,
+      highlight
+    };
+  });
+
+  const diffRows = rows.filter(r => r.foldChange >= 2);
+  return { rows, diffRows };
+}
 
   function renderTable(b1, b2) {
     const resultDiv = document.getElementById('result');
