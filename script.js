@@ -28,43 +28,41 @@ document.addEventListener('DOMContentLoaded', () => {
     return `${h}h ${m.toString().padStart(2, "0")}m`;
   }
 
-  function buildRows(b1, b2) {
-    const drugs = Object.keys(tableData[b1]);
+function buildRows(b1, b2) {
+  const drugs = Object.keys(tableData[b1]);
 
-    const rows = drugs.map(drug => {
-      const v1 = Number(tableData[b1][drug]);
-      const v2 = Number(tableData[b2][drug]);
+  const rows = drugs.map(drug => {
+    const v1 = Number(tableData[b1][drug]);
+    const v2 = Number(tableData[b2][drug]);
 
-      const maxVal = Math.max(v1, v2);
-const minVal = Math.min(v1, v2);
+    const maxVal = Math.max(v1, v2);
+    const minVal = Math.min(v1, v2);
 
-// Fold-change (avoid divide-by-zero)
-const foldChange = minVal === 0 ? Infinity : maxVal / minVal;
+    const foldChange = minVal === 0 ? Infinity : maxVal / minVal;
 
-// NEW hard-coded rule
-const lowThreshold = Math.SQRT2;   // ~1.414
-const highThreshold = 2.1;
+    const lowThreshold = Math.SQRT2;   // ~1.414
+    const highThreshold = 2.1;
 
-const hardHighlight =
-  (v1 < lowThreshold && v2 > highThreshold) ||
-  (v2 < lowThreshold && v1 > highThreshold);
+    const hardHighlight =
+      (v1 < lowThreshold && v2 > highThreshold) ||
+      (v2 < lowThreshold && v1 > highThreshold);
 
-// Final highlight decision
-const highlight = (foldChange >= 2 || hardHighlight) ? "highlight" : "";
+    const highlight = (foldChange >= 3 || hardHighlight) ? "highlight" : "";
 
+    return {
+      drug,
+      v1,
+      v2,
+      foldChange,
+      highlight
+    };
+  });
 
-      return {
-        drug,
-        v1,
-        v2,
-        foldChange,
-        highlight
-      };
-    });
+  // FIXED: use highlight logic, not foldChange ≥ 3
+  const diffRows = rows.filter(r => r.highlight === "highlight");
 
-    const diffRows = rows.filter(r => r.foldChange >= 3);
-    return { rows, diffRows };
-  }
+  return { rows, diffRows };
+}
 
   function renderTable(b1, b2) {
     const resultDiv = document.getElementById('result');
