@@ -40,8 +40,8 @@ function buildRows(b1, b2) {
 
     const foldChange = minVal === 0 ? Infinity : maxVal / minVal;
 
-    const lowThreshold = Math.SQRT2;   // ~1.414
-    const highThreshold = 2.1;
+    const lowThreshold = 1.45;   // ~1.414
+    const highThreshold = 2.2;
 
     const hardHighlight =
       (v1 < lowThreshold && v2 > highThreshold) ||
