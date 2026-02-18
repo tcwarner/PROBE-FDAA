@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   let tableData = {};
   let showAll = false;
+  let lastRows = [];
+  let lastDiffRows = [];
 
   async function loadData() {
     try {
@@ -13,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const bac1 = document.getElementById('bacteria1');
     const bac2 = document.getElementById('bacteria2');
-
     const bacteriaList = Object.keys(tableData);
 
     bacteriaList.forEach(bac => {
@@ -30,27 +31,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Prevent selecting the same species twice
     bac1.addEventListener('change', () => {
-      if (bac1.value === bac2.value) {
+      if (bac1.value === bac2.value && bac2.options.length > 1) {
         bac2.selectedIndex = (bac2.selectedIndex + 1) % bac2.options.length;
       }
     });
 
     bac2.addEventListener('change', () => {
-      if (bac2.value === bac1.value) {
+      if (bac2.value === bac1.value && bac1.options.length > 1) {
         bac1.selectedIndex = (bac1.selectedIndex + 1) % bac1.options.length;
       }
     });
   }
 
-  function renderTable() {
-    const b1 = document.getElementById('bacteria1').value;
-    const b2 = document.getElementById('bacteria2').value;
-
-    if (!b1 || !b2) return;
-
+  function buildRows(b1, b2) {
     const drugs = Object.keys(tableData[b1]);
 
-    let rows = drugs.map(drug => {
+    const rows = drugs.map(drug => {
       const v1 = Number(tableData[b1][drug]);
       const v2 = Number(tableData[b2][drug]);
       const diff = Math.abs(v1 - v2);
@@ -64,23 +60,28 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     });
 
-    // Differences-only view
     const diffRows = rows.filter(r => r.diff > 1);
+    return { rows, diffRows };
+  }
 
+  function renderTable(b1, b2) {
+    const resultDiv = document.getElementById('result');
     const toggleBtn = document.getElementById('toggle');
 
-    // If no differences exist
-    if (diffRows.length === 0) {
-      toggleBtn.style.display = "none"; // hide toggle
-      document.getElementById('result').innerHTML =
-        `<p>No differential incorporation found.</p>`;
+    if (!b1 || !b2) {
+      resultDiv.innerHTML = "";
       return;
     }
 
-    // Differences exist → show toggle
-    toggleBtn.style.display = "inline-block";
+    const rowsToShow = showAll ? lastRows : lastDiffRows;
 
-    const visibleRows = showAll ? rows : diffRows;
+    if (rowsToShow.length === 0 && !showAll) {
+      // No differences, default view
+      resultDiv.innerHTML = `<p>No differential incorporation found.</p>`;
+      toggleBtn.style.display = "inline-block";
+      toggleBtn.textContent = "Show all compounds";
+      return;
+    }
 
     let html = `
       <table>
@@ -91,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </tr>
     `;
 
-    visibleRows.forEach(r => {
+    rowsToShow.forEach(r => {
       html += `
         <tr class="${r.highlight}">
           <td>${r.drug}</td>
@@ -102,20 +103,33 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     html += `</table>`;
-    document.getElementById('result').innerHTML = html;
+    resultDiv.innerHTML = html;
+
+    // Toggle button text
+    toggleBtn.style.display = "inline-block";
+    toggleBtn.textContent = showAll ? "Show only differences" : "Show all compounds";
   }
 
   document.getElementById('submit').addEventListener('click', () => {
-    showAll = false;
-    document.getElementById('toggle').textContent = "Show all compounds";
-    renderTable();
+    const b1 = document.getElementById('bacteria1').value;
+    const b2 = document.getElementById('bacteria2').value;
+    if (!b1 || !b2) return;
+
+    const { rows, diffRows } = buildRows(b1, b2);
+    lastRows = rows;
+    lastDiffRows = diffRows;
+
+    showAll = false; // default to differences-only
+    renderTable(b1, b2);
   });
 
   document.getElementById('toggle').addEventListener('click', () => {
+    const b1 = document.getElementById('bacteria1').value;
+    const b2 = document.getElementById('bacteria2').value;
+    if (!b1 || !b2 || lastRows.length === 0) return;
+
     showAll = !showAll;
-    document.getElementById('toggle').textContent =
-      showAll ? "Show only differences" : "Show all compounds";
-    renderTable();
+    renderTable(b1, b2);
   });
 
   loadData();
