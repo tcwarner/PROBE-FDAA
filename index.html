@@ -20,12 +20,18 @@
       padding: 8px;
       font-size: 1rem;
     }
-    #result {
+    table {
+      width: 100%;
+      border-collapse: collapse;
       margin-top: 30px;
-      padding: 15px;
-      background: #f0f0f0;
-      border-radius: 6px;
-      font-size: 1.2rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    .highlight {
+      background-color: #ffdddd;
     }
   </style>
 </head>
@@ -39,9 +45,6 @@
 
   <label for="bacteria2">Select second bacterium:</label>
   <select id="bacteria2"></select>
-
-  <label for="drug">Select a drug:</label>
-  <select id="drug"></select>
 
   <button id="submit">Compare</button>
 
