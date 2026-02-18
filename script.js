@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+  let growthTimes = {};
   let tableData = {};
   let showAll = false;
   let lastRows = [];
@@ -6,7 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadData() {
     const response = await fetch('data.json');
-    tableData = await response.json();
+    const data = await response.json();
+
+    // Option B structure
+    growthTimes = data.growthTimes;
+    tableData = data.fluorescence;
 
     const bac1 = document.getElementById('bacteria1');
     const bac2 = document.getElementById('bacteria2');
@@ -28,9 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const maxVal = Math.max(v1, v2);
       const minVal = Math.min(v1, v2);
 
-      // Fold-change (avoid divide-by-zero)
       const foldChange = minVal === 0 ? Infinity : maxVal / minVal;
-
       const highlight = foldChange >= 2 ? "highlight" : "";
 
       return {
@@ -52,6 +55,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let html = "";
 
+    // Growth time display
+    const gt1 = growthTimes[b1];
+    const gt2 = growthTimes[b2];
+
+    html += `
+      <p><strong>Growth time:</strong> ${b1} = ${gt1} min, ${b2} = ${gt2} min</p>
+    `;
+
     // If no differences exist, show message AND table
     if (lastDiffRows.length === 0) {
       html += `<p><strong>This set of compounds likely cannot distinguish these species.</strong></p>`;
@@ -70,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     rowsToShow.forEach(r => {
       html += `
-        <tr class="${r.highlight}">
+        <tr>
           <td>${r.drug}</td>
           <td>${r.v1}</td>
           <td>${r.v2}</td>
@@ -84,13 +95,12 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleBtn.textContent = showAll ? "Show only differences" : "Show all compounds";
   }
 
-  // Unified Compare handler
+  // Compare handler
   document.getElementById('submit').addEventListener('click', () => {
     const b1 = document.getElementById('bacteria1').value;
     const b2 = document.getElementById('bacteria2').value;
     const warning = document.getElementById('warning');
 
-    // Prevent comparing the same species
     if (b1 === b2) {
       if (warning) {
         warning.textContent = "Warning: You cannot compare a species to itself.";
