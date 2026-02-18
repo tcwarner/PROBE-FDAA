@@ -77,19 +77,22 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleBtn.textContent = showAll ? "Show only differences" : "Show all compounds";
   }
 
-  // Unified Compare handler
+  // Compare handler (with safe warning handling)
   document.getElementById('submit').addEventListener('click', () => {
     const b1 = document.getElementById('bacteria1').value;
     const b2 = document.getElementById('bacteria2').value;
-    const warning = document.getElementById('warning');
+    const warning = document.getElementById('warning'); // may be null
 
-    // Prevent comparing the same species
     if (b1 === b2) {
-      warning.textContent = "Warning: You cannot compare a species to itself.";
+      if (warning) {
+        warning.textContent = "Warning: You cannot compare a species to itself.";
+      }
       return;
     }
 
-    warning.textContent = "";
+    if (warning) {
+      warning.textContent = "";
+    }
 
     const { rows, diffRows } = buildRows(b1, b2);
     lastRows = rows;
