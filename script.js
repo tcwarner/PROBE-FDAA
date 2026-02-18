@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // If no differences exist, show message AND table
     if (lastDiffRows.length === 0) {
-      html += `<p><strong>No differential incorporation found.</strong></p>`;
+      html += `<p><strong>This set of compounds likely cannot distinguish these species.</strong></p>`;
     }
 
     const rowsToShow = showAll ? lastRows : lastDiffRows;
