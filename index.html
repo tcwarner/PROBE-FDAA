@@ -1,22 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Lookup Tool</title>
+  <title>Bacteria–Drug Binding Lookup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      line-height: 1.6;
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    select, button {
+      margin-top: 8px;
+      padding: 8px;
+      font-size: 1rem;
+    }
+    #result {
+      margin-top: 30px;
+      padding: 15px;
+      background: #f0f0f0;
+      border-radius: 6px;
+      font-size: 1.2rem;
+    }
+  </style>
 </head>
+
 <body>
 
-  <h1>Lookup Tool</h1>
+  <h1>Bacteria–Drug Binding Lookup</h1>
 
-<select id="bacteria"></select>
-<select id="drug"></select>
-<button id="submit">Submit</button>
+  <label for="bacteria">Select a bacterium:</label>
+  <select id="bacteria"></select>
 
-<div id="result"></div>
+  <label for="drug">Select a drug:</label>
+  <select id="drug"></select>
 
   <button id="submit">Submit</button>
 
-  <h2>Result:</h2>
   <div id="result"></div>
 
   <script src="script.js"></script>
