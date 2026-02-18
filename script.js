@@ -24,7 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const rows = drugs.map(drug => {
       const v1 = Number(tableData[b1][drug]);
       const v2 = Number(tableData[b2][drug]);
-      const diff = Math.abs(v1 - v2);
+      const maxVal = Math.max(v1, v2);
+      const minVal = Math.min(v1, v2);
+      const foldChange = minVal === 0 ? Infinity : maxVal / minVal;
+      const highlight = foldChange >= 2 ? 'highlight' : '';
+
 
       return {
         drug,
