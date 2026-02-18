@@ -63,6 +63,16 @@ document.addEventListener('DOMContentLoaded', () => {
       <p><strong>Recommeded individual growth times:</strong> ${b1} = ${gt1} min, ${b2} = ${gt2} min</p>
     `;
 
+    // Calculated co-culture growth time
+    const shorter = Math.min(gt1, gt2);
+    const average = (gt1 + gt2) / 2;
+    const coCulture = Math.min(2 * shorter, average);
+
+    html += `
+      <p><strong>Calculated co-culture growth time:</strong> ${coCulture} min</p>
+`;
+
+    
     // If no differences exist, show message AND table
     if (lastDiffRows.length === 0) {
       html += `<p><strong>This set of compounds likely cannot distinguish these species.</strong></p>`;
