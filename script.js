@@ -16,19 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
       bac1.add(new Option(bac, bac));
       bac2.add(new Option(bac, bac));
     });
-
-    // Prevent selecting the same species twice
-    bac1.addEventListener('change', () => {
-      if (bac1.value === bac2.value) {
-        bac2.selectedIndex = (bac2.selectedIndex + 1) % bac2.options.length;
-      }
-    });
-
-    bac2.addEventListener('change', () => {
-      if (bac2.value === bac1.value) {
-        bac1.selectedIndex = (bac1.selectedIndex + 1) % bac1.options.length;
-      }
-    });
   }
 
   function buildRows(b1, b2) {
@@ -85,7 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     html += `</table>`;
-
     resultDiv.innerHTML = html;
 
     // Update toggle button
@@ -93,9 +79,19 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleBtn.textContent = showAll ? "Show only differences" : "Show all compounds";
   }
 
+  // ✅ SINGLE unified Compare handler
   document.getElementById('submit').addEventListener('click', () => {
     const b1 = document.getElementById('bacteria1').value;
     const b2 = document.getElementById('bacteria2').value;
+    const warning = document.getElementById('warning');
+
+    // 🚫 Prevent comparing the same species
+    if (b1 === b2) {
+      warning.textContent = "Warning: You cannot compare a species to itself.";
+      return;
+    }
+
+    warning.textContent = "";
 
     const { rows, diffRows } = buildRows(b1, b2);
     lastRows = rows;
@@ -105,27 +101,14 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTable(b1, b2);
   });
 
-document.getElementById('submit').addEventListener('click', () => {
-  const b1 = document.getElementById('bacteria1').value;
-  const b2 = document.getElementById('bacteria2').value;
-  const warning = document.getElementById('warning');
+  // Toggle button
+  document.getElementById('toggle').addEventListener('click', () => {
+    const b1 = document.getElementById('bacteria1').value;
+    const b2 = document.getElementById('bacteria2').value;
 
-  // 🚫 PREVENT comparing the same species
-  if (b1 === b2) {
-    warning.textContent = "Warning: You cannot compare a species to itself.";
-    return; // stop here — do NOT build the table
-  }
-
-  // Clear warning if valid
-  warning.textContent = "";
-
-  const { rows, diffRows } = buildRows(b1, b2);
-  lastRows = rows;
-  lastDiffRows = diffRows;
-
-  showAll = false; // default to differences-only
-  renderTable(b1, b2);
-});
+    showAll = !showAll;
+    renderTable(b1, b2);
+  });
 
   loadData();
 });
