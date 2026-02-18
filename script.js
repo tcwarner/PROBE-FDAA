@@ -64,51 +64,52 @@ document.addEventListener('DOMContentLoaded', () => {
     return { rows, diffRows };
   }
 
-  function renderTable(b1, b2) {
-    const resultDiv = document.getElementById('result');
-    const toggleBtn = document.getElementById('toggle');
+function renderTable(b1, b2) {
+  const resultDiv = document.getElementById('result');
+  const toggleBtn = document.getElementById('toggle');
 
-    if (!b1 || !b2) {
-      resultDiv.innerHTML = "";
-      return;
-    }
-
-    const rowsToShow = showAll ? lastRows : lastDiffRows;
-
-    if (rowsToShow.length === 0 && !showAll) {
-      // No differences, default view
-      resultDiv.innerHTML = `<p>No differential incorporation found.</p>`;
-      toggleBtn.style.display = "inline-block";
-      toggleBtn.textContent = "Show all compounds";
-      return;
-    }
-
-    let html = `
-      <table>
-        <tr>
-          <th>Drug</th>
-          <th>${b1}</th>
-          <th>${b2}</th>
-        </tr>
-    `;
-
-    rowsToShow.forEach(r => {
-      html += `
-        <tr class="${r.highlight}">
-          <td>${r.drug}</td>
-          <td>${r.v1}</td>
-          <td>${r.v2}</td>
-        </tr>
-      `;
-    });
-
-    html += `</table>`;
-    resultDiv.innerHTML = html;
-
-    // Toggle button text
-    toggleBtn.style.display = "inline-block";
-    toggleBtn.textContent = showAll ? "Show only differences" : "Show all compounds";
+  if (!b1 || !b2) {
+    resultDiv.innerHTML = "";
+    return;
   }
+
+  const rowsToShow = showAll ? lastRows : lastDiffRows;
+
+  let html = "";
+
+  // If no differences exist, show the message at the top
+  if (lastDiffRows.length === 0) {
+    html += `<p><strong>No differential incorporation found.</strong></p>`;
+  }
+
+  // Always show the table (either all rows or only diff rows)
+  html += `
+    <table>
+      <tr>
+        <th>Drug</th>
+        <th>${b1}</th>
+        <th>${b2}</th>
+      </tr>
+  `;
+
+  rowsToShow.forEach(r => {
+    html += `
+      <tr class="${r.highlight}">
+        <td>${r.drug}</td>
+        <td>${r.v1}</td>
+        <td>${r.v2}</td>
+      </tr>
+    `;
+  });
+
+  html += `</table>`;
+
+  resultDiv.innerHTML = html;
+
+  // Toggle button text
+  toggleBtn.style.display = "inline-block";
+  toggleBtn.textContent = showAll ? "Show only differences" : "Show all compounds";
+}
 
   document.getElementById('submit').addEventListener('click', () => {
     const b1 = document.getElementById('bacteria1').value;
