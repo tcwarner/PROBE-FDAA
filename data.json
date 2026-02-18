@@ -1,0 +1,10 @@
+{
+  "A": {
+    "X": "Result for A + X",
+    "Y": "Result for A + Y"
+  },
+  "B": {
+    "X": "Result for B + X",
+    "Y": "Result for B + Y"
+  }
+}
