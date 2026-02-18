@@ -74,18 +74,16 @@ document.addEventListener('DOMContentLoaded', () => {
     html += `</table>`;
     resultDiv.innerHTML = html;
 
-    // Update toggle button
-    toggleBtn.style.display = "inline-block";
     toggleBtn.textContent = showAll ? "Show only differences" : "Show all compounds";
   }
 
-  // ✅ SINGLE unified Compare handler
+  // Unified Compare handler
   document.getElementById('submit').addEventListener('click', () => {
     const b1 = document.getElementById('bacteria1').value;
     const b2 = document.getElementById('bacteria2').value;
     const warning = document.getElementById('warning');
 
-    // 🚫 Prevent comparing the same species
+    // Prevent comparing the same species
     if (b1 === b2) {
       warning.textContent = "Warning: You cannot compare a species to itself.";
       return;
@@ -97,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     lastRows = rows;
     lastDiffRows = diffRows;
 
-    showAll = false; // default to differences-only
+    showAll = false;
     renderTable(b1, b2);
   });
 
