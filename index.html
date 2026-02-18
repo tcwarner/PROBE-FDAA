@@ -2,18 +2,44 @@
 <html lang="en">
 <head>
   <style>
-  select option {
-    font-style: italic;
-  }
+    select option {
+      font-style: italic;
+    }
 
-  /* Optional: also italicize the selected value */
-  select {
-    font-style: italic;
-  }
-</style>
+    select {
+      font-style: italic;
+    }
+
+    /* Collapsible info box styling */
+    details.info-box {
+      margin: 1em 0;
+      padding: 0.5em 1em;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #f9f9f9;
+    }
+
+    details.info-box summary {
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1.1em;
+    }
+
+    details.info-box[open] {
+      background: #f0f0f0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      line-height: 1.6;
+    }
+  </style>
 
   <meta charset="UTF-8">
   <title>PROBE-FDAA Species Distinguishment Predictor</title>
+</head>
   <style>
     body {
       font-family: Arial, sans-serif;
