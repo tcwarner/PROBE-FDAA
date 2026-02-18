@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     });
 
-    const diffRows = rows.filter(r => r.foldChange >= 2);
+    const diffRows = rows.filter(r => r.foldChange >= 3);
     return { rows, diffRows };
   }
 
