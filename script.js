@@ -22,6 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
       bac2.add(new Option(bac, bac));
     });
   }
+  function formatHM(minutes) {
+    const h = Math.floor(minutes / 60);
+    const m = Math.round(minutes % 60);
+    return `${h}h ${m.toString().padStart(2, "0")}m`;
+  }
 
   function buildRows(b1, b2) {
     const drugs = Object.keys(tableData[b1]);
@@ -60,8 +65,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const gt2 = growthTimes[b2];
 
     html += `
-      <p><strong>Recommeded individual growth times:</strong> ${b1} = ${gt1} min, ${b2} = ${gt2} min</p>
+    <p><strong>Recommended individual growth times:</strong> 
+      ${b1} = ${formatHM(gt1)}, 
+      ${b2} = ${formatHM(gt2)}
+      </p>
     `;
+
 
     // Calculated co-culture growth time
     const shorter = Math.min(gt1, gt2);
@@ -69,8 +78,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const coCulture = Math.min(2 * shorter, average);
 
     html += `
-      <p><strong>Calculated co-culture growth time:</strong> ${coCulture} min</p>
+    <p><strong>Calculated co-culture growth time:</strong> ${formatHM(coCulture)}</p>
 `;
+
 
     
     // If no differences exist, show message AND table
