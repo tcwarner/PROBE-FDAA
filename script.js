@@ -68,9 +68,9 @@ document.addEventListener('DOMContentLoaded', () => {
     html += `
       <table>
         <tr>
-          <th>Drug</th>
-          <th>${b1}</th>
-          <th>${b2}</th>
+          <th>FDAA</th>
+          <th>${b1} Incorporation</th>
+          <th>${b2} Incorporation</th>
         </tr>
     `;
 
