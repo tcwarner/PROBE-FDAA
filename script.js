@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   let tableData = {};
-  let showAll = false; // toggle state
+  let showAll = false;
 
   async function loadData() {
     try {
@@ -50,59 +50,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const drugs = Object.keys(tableData[b1]);
 
-    let rows = [];
-
-    drugs.forEach(drug => {
+    let rows = drugs.map(drug => {
       const v1 = Number(tableData[b1][drug]);
       const v2 = Number(tableData[b2][drug]);
       const diff = Math.abs(v1 - v2);
 
-      const highlight = diff > 1 ? 'highlight' : '';
-
-      rows.push({
+      return {
         drug,
         v1,
         v2,
         diff,
-        highlight
-      });
+        highlight: diff > 1 ? "highlight" : ""
+      };
     });
 
-    // Filter to only differences unless toggled
-    const filteredRows = showAll ? rows : rows.filter(r => r.diff > 1);
+    // Differences-only view
+    const diffRows = rows.filter(r => r.diff > 1);
 
-    let html = "";
+    const toggleBtn = document.getElementById('toggle');
 
-    if (filteredRows.length === 0) {
-      html = `<p>No differential incorporation found.</p>`;
-    } else {
-      html = `
-        <table>
-          <tr>
-            <th>Drug</th>
-            <th>${b1}</th>
-            <th>${b2}</th>
-          </tr>
-      `;
-
-      filteredRows.forEach(r => {
-        html += `
-          <tr class="${r.highlight}">
-            <td>${r.drug}</td>
-            <td>${r.v1}</td>
-            <td>${r.v2}</td>
-          </tr>
-        `;
-      });
-
-      html += `</table>`;
+    // If no differences exist
+    if (diffRows.length === 0) {
+      toggleBtn.style.display = "none"; // hide toggle
+      document.getElementById('result').innerHTML =
+        `<p>No differential incorporation found.</p>`;
+      return;
     }
 
+    // Differences exist → show toggle
+    toggleBtn.style.display = "inline-block";
+
+    const visibleRows = showAll ? rows : diffRows;
+
+    let html = `
+      <table>
+        <tr>
+          <th>Drug</th>
+          <th>${b1}</th>
+          <th>${b2}</th>
+        </tr>
+    `;
+
+    visibleRows.forEach(r => {
+      html += `
+        <tr class="${r.highlight}">
+          <td>${r.drug}</td>
+          <td>${r.v1}</td>
+          <td>${r.v2}</td>
+        </tr>
+      `;
+    });
+
+    html += `</table>`;
     document.getElementById('result').innerHTML = html;
   }
 
   document.getElementById('submit').addEventListener('click', () => {
-    showAll = false; // reset to differences-only
+    showAll = false;
     document.getElementById('toggle').textContent = "Show all compounds";
     renderTable();
   });
