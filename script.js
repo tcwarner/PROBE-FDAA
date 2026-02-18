@@ -66,8 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     html += `
     <p><strong>Recommended individual growth times:</strong> 
-      ${b1} = ${formatHM(gt1)}, 
-      ${b2} = ${formatHM(gt2)}
+      $<em>{b1}</em> = ${formatHM(gt1)}, 
+      $<em>{b2}</em> = ${formatHM(gt2)}
       </p>
     `;
 
@@ -94,8 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
       <table>
         <tr>
           <th>FDAA</th>
-          <th>${b1} Relative labeling</th>
-          <th>${b2} Relative labeling</th>
+          <th>Relative labeling of <em>${b1}</em></th>
+          <th>Relative labeling of <em>${b2}</em></th>
         </tr>
     `;
 
