@@ -74,6 +74,12 @@
     .highlight {
       background-color: #ffdddd;
     }
+
+    #predictionResult {
+      margin-top: 15px;
+      font-family: "Courier New", monospace;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 
@@ -118,10 +124,14 @@
 
     <button id="predictBtn">Predict species</button>
 
-    <p id="predictionResult" style="font-weight:bold;"></p>
+    <p id="predictionResult"></p>
+
+    <canvas id="radarPlot" width="400" height="400" style="margin-top:20px;"></canvas>
   </div>
 
-  <!-- Script must be LAST -->
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Main script -->
   <script src="script.js"></script>
 
 </body>
