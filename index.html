@@ -109,19 +109,17 @@
   <div id="result"></div>
 
   <!-- Prediction Box -->
-  <div id="predict-box" style="margin-top:40px;">
-    <h3>Predict species from binding values</h3>
+<div id="predict-box" style="margin-top:40px;">
+  <h3>Predict species from binding values</h3>
 
-    <p>Enter FDAA binding values (comma‑separated, in the same order as shown in the table):</p>
+  <p>Enter FDAA binding values (leave blank for unknowns):</p>
 
-    <input type="text" id="bindingInput"
-           placeholder="e.g., 5.2, 1.1, 3.8, 1.0, 1.3, 1.1, 1.2"
-           style="width:100%;">
+  <div id="predictInputs"></div>
 
-    <button id="predictBtn">Predict species</button>
+  <button id="predictBtn">Predict species</button>
 
-    <p id="predictionResult" style="font-weight:bold;"></p>
-  </div>
+  <p id="predictionResult" style="font-weight:bold;"></p>
+</div>
 
   <!-- Script must be LAST -->
   <script src="script.js"></script>
