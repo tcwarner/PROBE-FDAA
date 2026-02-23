@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <title>PROBE-FDAA Tool</title>
+
   <style>
+    /* Italicize species names in dropdowns */
     select option {
       font-style: italic;
     }
-
     select {
       font-style: italic;
     }
@@ -18,62 +21,56 @@
       border-radius: 6px;
       background: #f9f9f9;
     }
-
     details.info-box summary {
       font-weight: bold;
       cursor: pointer;
       font-size: 1.1em;
     }
-
     details.info-box[open] {
       background: #f0f0f0;
     }
 
+    /* Page layout */
     body {
       font-family: Arial, sans-serif;
       max-width: 800px;
       margin: 40px auto;
       line-height: 1.6;
     }
-  </style>
 
-  <meta charset="UTF-8">
-  <title>PROBE-FDAA Tool</title>
-</head>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 40px auto;
-      line-height: 1.6;
-    }
     label {
       display: block;
       margin-top: 20px;
       font-weight: bold;
     }
+
     select, button {
       margin-top: 8px;
       padding: 8px;
       font-size: 1rem;
     }
+
     button {
       margin-right: 10px;
       cursor: pointer;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 30px;
     }
+
     th, td {
       border: 1px solid #ccc;
       padding: 8px;
       text-align: center;
     }
+
     th {
       background-color: #f5f5f5;
     }
+
     .highlight {
       background-color: #ffdddd;
     }
@@ -81,15 +78,23 @@
 </head>
 
 <body>
-    <h1>PROBE-FDAA User Guide</h1>
+
+  <h1>PROBE-FDAA User Guide</h1>
+
   <details class="info-box">
     <summary>How to use this tool</summary>
     <p>
-      FDAAs have differential incorporation in different bacteria. Using this fact, we performed a screen of 7 compounds in 17 bacterial species to identify potential patterns of incorporation. You may use the results of this screen in this tool to perform cellular identification. To do this, please enter the bacteria you would like to distinguish in the checkboxes. The systen will then determine which FDAAs may be used to achieve separation. Each number within the table represents the relative Mean Fluorescence Intensity (MFI) from a flow cytometry experiment, greater MFIs represent increased labeling. Rows highligted in red are predicted to be distinguishable based on the activity of that compound. Predicted growth times are also given to allow full incorporation. For any questions, please contact tcwarner@mit.edu.
+      FDAAs have differential incorporation in different bacteria. Using this fact, we performed a screen of 7 compounds in 17 bacterial species to identify potential patterns of incorporation. You may use the results of this screen in this tool to perform cellular identification.
     </p>
-    </details>
+    <p>
+      Select two species to compare. The system will determine which FDAAs may be used to distinguish them. Each number represents relative Mean Fluorescence Intensity (MFI) from flow cytometry. Rows highlighted in red indicate compounds predicted to distinguish the species. Growth times are also provided to guide incubation.
+    </p>
+    <p>
+      For questions, contact tcwarner@mit.edu.
+    </p>
+  </details>
 
-  <!-- Your dropdowns, buttons, results, etc. go here -->
+  <!-- Comparison UI -->
   <label for="bacteria1">Select first bacterium:</label>
   <select id="bacteria1"></select>
 
@@ -98,23 +103,28 @@
 
   <button id="submit">Compare</button>
   <button id="toggle">Show all compounds</button>
+
   <p id="warning" style="color:#b30000; font-weight:bold; margin-top:10px;"></p>
 
   <div id="result"></div>
 
+  <!-- Prediction Box -->
+  <div id="predict-box" style="margin-top:40px;">
+    <h3>Predict species from binding values</h3>
+
+    <p>Enter FDAA binding values (comma‑separated, in the same order as shown in the table):</p>
+
+    <input type="text" id="bindingInput"
+           placeholder="e.g., 5.2, 1.1, 3.8, 1.0, 1.3, 1.1, 1.2"
+           style="width:100%;">
+
+    <button id="predictBtn">Predict species</button>
+
+    <p id="predictionResult" style="font-weight:bold;"></p>
+  </div>
+
+  <!-- Script must be LAST -->
   <script src="script.js"></script>
-<div id="predict-box">
-  <h3>Predict species from binding values</h3>
 
-  <p>Enter FDAA binding values (comma‑separated, in the same order as shown in the table):</p>
-
-  <input type="text" id="bindingInput" placeholder="e.g., 5.2, 1.1, 3.8, 1.0, 1.3, 1.1, 1.2" style="width:100%;">
-
-  <button id="predictBtn">Predict species</button>
-
-  <p id="predictionResult"></p>
-</div>
-
-  
 </body>
 </html>
