@@ -186,3 +186,30 @@ function predictSpecies(bindingValues) {
 
   return bestSpecies;
 }
+
+document.getElementById('predictBtn').addEventListener('click', () => {
+  const input = document.getElementById('bindingInput').value.trim();
+
+  if (!input) {
+    document.getElementById('predictionResult').textContent =
+      "Please enter binding values first.";
+    return;
+  }
+
+  const values = input.split(',').map(v => Number(v.trim()));
+
+  // Validate length
+  const expectedLength = Object.keys(tableData[Object.keys(tableData)[0]]).length;
+
+  if (values.length !== expectedLength) {
+    document.getElementById('predictionResult').textContent =
+      `Please enter exactly ${expectedLength} values.`;
+    return;
+  }
+
+  const species = predictSpecies(values);
+
+  document.getElementById('predictionResult').innerHTML =
+    `Closest match: <em>${species}</em>`;
+});
+
