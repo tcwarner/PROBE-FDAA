@@ -1,15 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
+
   let growthTimes = {};
   let tableData = {};
   let showAll = false;
   let lastRows = [];
   let lastDiffRows = [];
 
+  // -----------------------------
+  // Load JSON data
+  // -----------------------------
   async function loadData() {
     const response = await fetch('data.json');
     const data = await response.json();
 
-    // Option B structure
     growthTimes = data.growthTimes;
     tableData = data.fluorescence;
 
@@ -22,78 +25,84 @@ document.addEventListener('DOMContentLoaded', () => {
       bac2.add(new Option(bac, bac));
     });
   }
+
+  // -----------------------------
+  // Convert minutes → H:MM
+  // -----------------------------
   function formatHM(minutes) {
     const h = Math.floor(minutes / 60);
     const m = Math.round(minutes % 60);
     return `${h}h ${m.toString().padStart(2, "0")}m`;
   }
 
-function buildRows(b1, b2) {
-  const drugs = Object.keys(tableData[b1]);
+  // -----------------------------
+  // Build table rows + highlighting
+  // -----------------------------
+  function buildRows(b1, b2) {
+    const drugs = Object.keys(tableData[b1]);
 
-  const rows = drugs.map(drug => {
-    const v1 = Number(tableData[b1][drug]);
-    const v2 = Number(tableData[b2][drug]);
+    const rows = drugs.map(drug => {
+      const v1 = Number(tableData[b1][drug]);
+      const v2 = Number(tableData[b2][drug]);
 
-    const maxVal = Math.max(v1, v2);
-    const minVal = Math.min(v1, v2);
+      const maxVal = Math.max(v1, v2);
+      const minVal = Math.min(v1, v2);
 
-    const foldChange = minVal === 0 ? Infinity : maxVal / minVal;
+      const foldChange = minVal === 0 ? Infinity : maxVal / minVal;
 
-    const lowThreshold = 1.45;   // ~1.414
-    const highThreshold = 2.2;
+      // Updated thresholds
+      const lowThreshold = 1.45;
+      const highThreshold = 2.2;
 
-    const hardHighlight =
-      (v1 < lowThreshold && v2 > highThreshold) ||
-      (v2 < lowThreshold && v1 > highThreshold);
+      const hardHighlight =
+        (v1 < lowThreshold && v2 > highThreshold) ||
+        (v2 < lowThreshold && v1 > highThreshold);
 
-    const highlight = (foldChange >= 3 || hardHighlight) ? "highlight" : "";
+      const highlight = (foldChange >= 3 || hardHighlight) ? "highlight" : "";
 
-    return {
-      drug,
-      v1,
-      v2,
-      foldChange,
-      highlight
-    };
-  });
+      return {
+        drug,
+        v1,
+        v2,
+        foldChange,
+        highlight
+      };
+    });
 
-  // FIXED: use highlight logic, not foldChange ≥ 3
-  const diffRows = rows.filter(r => r.highlight === "highlight");
+    // Use highlight logic for difference rows
+    const diffRows = rows.filter(r => r.highlight === "highlight");
 
-  return { rows, diffRows };
-}
+    return { rows, diffRows };
+  }
 
+  // -----------------------------
+  // Render comparison table
+  // -----------------------------
   function renderTable(b1, b2) {
     const resultDiv = document.getElementById('result');
     const toggleBtn = document.getElementById('toggle');
 
     let html = "";
 
-    // Growth time display
     const gt1 = growthTimes[b1];
     const gt2 = growthTimes[b2];
 
-  html += `
-    <p><strong>Recommended individual growth times:</strong> 
-      <em>${b1}</em> = ${formatHM(gt1)}, 
-      <em>${b2}</em> = ${formatHM(gt2)}
-    </p>
-  `;
+    html += `
+      <p><strong>Recommended individual growth times:</strong> 
+        <em>${b1}</em> = ${formatHM(gt1)}, 
+        <em>${b2}</em> = ${formatHM(gt2)}
+      </p>
+    `;
 
-
-    // Calculated co-culture growth time
+    // Co-culture growth time
     const shorter = Math.min(gt1, gt2);
     const average = (gt1 + gt2) / 2;
     const coCulture = Math.min(2 * shorter, average);
 
     html += `
-    <p><strong>Calculated co-culture growth time:</strong> ${formatHM(coCulture)}</p>
-`;
+      <p><strong>Calculated co-culture growth time:</strong> ${formatHM(coCulture)}</p>
+    `;
 
-
-    
-    // If no differences exist, show message AND table
     if (lastDiffRows.length === 0) {
       html += `<p><strong>This set of compounds likely cannot distinguish these species.</strong></p>`;
     }
@@ -110,14 +119,14 @@ function buildRows(b1, b2) {
     `;
 
     rowsToShow.forEach(r => {
-  html += `
-    <tr class="${r.highlight}">
-      <td>${r.drug}</td>
-      <td>${r.v1}</td>
-      <td>${r.v2}</td>
-    </tr>
-  `;
-});
+      html += `
+        <tr class="${r.highlight}">
+          <td>${r.drug}</td>
+          <td>${r.v1}</td>
+          <td>${r.v2}</td>
+        </tr>
+      `;
+    });
 
     html += `</table>`;
     resultDiv.innerHTML = html;
@@ -125,22 +134,20 @@ function buildRows(b1, b2) {
     toggleBtn.textContent = showAll ? "Show only differences" : "Show all compounds";
   }
 
-  // Compare handler
+  // -----------------------------
+  // Compare button
+  // -----------------------------
   document.getElementById('submit').addEventListener('click', () => {
     const b1 = document.getElementById('bacteria1').value;
     const b2 = document.getElementById('bacteria2').value;
     const warning = document.getElementById('warning');
 
     if (b1 === b2) {
-      if (warning) {
-        warning.textContent = "Warning: You cannot compare a species to itself.";
-      }
+      warning.textContent = "Warning: You cannot compare a species to itself.";
       return;
     }
 
-    if (warning) {
-      warning.textContent = "";
-    }
+    warning.textContent = "";
 
     const { rows, diffRows } = buildRows(b1, b2);
     lastRows = rows;
@@ -150,7 +157,9 @@ function buildRows(b1, b2) {
     renderTable(b1, b2);
   });
 
+  // -----------------------------
   // Toggle button
+  // -----------------------------
   document.getElementById('toggle').addEventListener('click', () => {
     const b1 = document.getElementById('bacteria1').value;
     const b2 = document.getElementById('bacteria2').value;
@@ -159,57 +168,63 @@ function buildRows(b1, b2) {
     renderTable(b1, b2);
   });
 
-  loadData();
-});
-function predictSpecies(bindingValues) {
-  const speciesList = Object.keys(tableData);
-  let bestSpecies = null;
-  let bestScore = Infinity;
+  // -----------------------------
+  // Species prediction engine
+  // -----------------------------
+  function predictSpecies(bindingValues) {
+    const speciesList = Object.keys(tableData);
+    let bestSpecies = null;
+    let bestScore = Infinity;
 
-  speciesList.forEach(species => {
-    const speciesValues = Object.values(tableData[species]).map(Number);
+    speciesList.forEach(species => {
+      const speciesValues = Object.values(tableData[species]).map(Number);
 
-    // Compute Euclidean distance
-    let sumSq = 0;
-    for (let i = 0; i < speciesValues.length; i++) {
-      const diff = bindingValues[i] - speciesValues[i];
-      sumSq += diff * diff;
+      let sumSq = 0;
+      for (let i = 0; i < speciesValues.length; i++) {
+        const diff = bindingValues[i] - speciesValues[i];
+        sumSq += diff * diff;
+      }
+
+      const distance = Math.sqrt(sumSq);
+
+      if (distance < bestScore) {
+        bestScore = distance;
+        bestSpecies = species;
+      }
+    });
+
+    return bestSpecies;
+  }
+
+  // -----------------------------
+  // Prediction button
+  // -----------------------------
+  document.getElementById('predictBtn').addEventListener('click', () => {
+    const input = document.getElementById('bindingInput').value.trim();
+
+    if (!input) {
+      document.getElementById('predictionResult').textContent =
+        "Please enter binding values first.";
+      return;
     }
 
-    const distance = Math.sqrt(sumSq);
+    const values = input.split(',').map(v => Number(v.trim()));
 
-    if (distance < bestScore) {
-      bestScore = distance;
-      bestSpecies = species;
+    const expectedLength = Object.keys(tableData[Object.keys(tableData)[0]]).length;
+
+    if (values.length !== expectedLength) {
+      document.getElementById('predictionResult').textContent =
+        `Please enter exactly ${expectedLength} values.`;
+      return;
     }
+
+    const species = predictSpecies(values);
+
+    document.getElementById('predictionResult').innerHTML =
+      `Closest match: <em>${species}</em>`;
   });
 
-  return bestSpecies;
-}
+  // Load data on startup
+  loadData();
 
-document.getElementById('predictBtn').addEventListener('click', () => {
-  const input = document.getElementById('bindingInput').value.trim();
-
-  if (!input) {
-    document.getElementById('predictionResult').textContent =
-      "Please enter binding values first.";
-    return;
-  }
-
-  const values = input.split(',').map(v => Number(v.trim()));
-
-  // Validate length
-  const expectedLength = Object.keys(tableData[Object.keys(tableData)[0]]).length;
-
-  if (values.length !== expectedLength) {
-    document.getElementById('predictionResult').textContent =
-      `Please enter exactly ${expectedLength} values.`;
-    return;
-  }
-
-  const species = predictSpecies(values);
-
-  document.getElementById('predictionResult').innerHTML =
-    `Closest match: <em>${species}</em>`;
 });
-
