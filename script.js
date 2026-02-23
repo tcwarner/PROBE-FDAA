@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   let showAll = false;
   let lastRows = [];
   let lastDiffRows = [];
+  let radarChart = null;
 
   // -----------------------------
   // Load JSON data
@@ -33,8 +34,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const container = document.getElementById('predictInputs');
     container.innerHTML = "";
 
-    const firstSpecies = Object.keys(tableData)[0];
-    const drugs = Object.keys(tableData[firstSpecies]);
+    // Use explicit order for compounds
+    const drugs = ["HADA", "NADA", "RADA", "BADA", "TADA", "Cy3", "Cy5"];
 
     drugs.forEach(drug => {
       const row = document.createElement('div');
@@ -184,12 +185,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // -----------------------------
-  // Species prediction engine
+  // Top-3 prediction engine
   // -----------------------------
-  function predictSpecies(bindingValues) {
+  function predictTopSpecies(bindingValues) {
     const speciesList = Object.keys(tableData);
-    let bestSpecies = null;
-    let bestScore = Infinity;
+    const results = [];
 
     speciesList.forEach(species => {
       const speciesValues = Object.values(tableData[species]).map(Number);
@@ -209,22 +209,99 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       const distance = Math.sqrt(sumSq / count);
 
-      if (distance < bestScore) {
-        bestScore = distance;
-        bestSpecies = species;
-      }
+      results.push({ species, distance });
     });
 
-    return bestSpecies;
+    results.sort((a, b) => a.distance - b.distance);
+
+    return results.slice(0, 3);
+  }
+
+  // -----------------------------
+  // Confidence scoring
+  // -----------------------------
+  function computeConfidence(top3) {
+    const total = top3[0].distance + top3[1].distance + top3[2].distance;
+
+    return top3.map(entry => ({
+      species: entry.species,
+      distance: entry.distance,
+      confidence: 1 - (entry.distance / total)
+    }));
+  }
+
+  // -----------------------------
+  // ASCII confidence bars
+  // -----------------------------
+  function buildConfidenceText(confEntries) {
+    const maxNameLen = Math.max(...confEntries.map(e => e.species.length));
+    const barWidth = 20;
+
+    let lines = ["Top 3 predicted species:\n"];
+
+    confEntries.forEach(entry => {
+      const namePadded = entry.species.padEnd(maxNameLen, " ");
+      const conf = entry.confidence;
+      const pct = (conf * 100).toFixed(1);
+
+      const filled = Math.round(conf * barWidth);
+      const empty = barWidth - filled;
+      const bar = "█".repeat(filled) + "░".repeat(empty);
+
+      lines.push(`${namePadded}  ${bar}  ${pct}%`);
+    });
+
+    return lines.join("\n");
+  }
+
+  // -----------------------------
+  // Radar plot
+  // -----------------------------
+  function drawRadarPlot(bindingValues, top3raw) {
+    const firstSpecies = Object.keys(tableData)[0];
+    const drugs = Object.keys(tableData[firstSpecies]);
+
+    const datasets = top3raw.map((entry, index) => ({
+      label: entry.species,
+      data: Object.values(tableData[entry.species]).map(Number),
+      fill: false,
+      borderColor: ["red", "blue", "green"][index],
+      borderWidth: 2
+    }));
+
+    datasets.unshift({
+      label: "Your Input",
+      data: bindingValues.map(v => v === null ? 0 : v),
+      fill: false,
+      borderColor: "black",
+      borderWidth: 3
+    });
+
+    const ctx = document.getElementById("radarPlot").getContext("2d");
+
+    if (radarChart) radarChart.destroy();
+
+    radarChart = new Chart(ctx, {
+      type: "radar",
+      data: {
+        labels: drugs,
+        datasets: datasets
+      },
+      options: {
+        scales: {
+          r: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
   }
 
   // -----------------------------
   // Prediction button
   // -----------------------------
   document.getElementById('predictBtn').addEventListener('click', () => {
-    const speciesList = Object.keys(tableData);
-    const firstSpecies = speciesList[0];
-    const drugs = Object.keys(tableData[firstSpecies]);
+    const drugs = ["HADA", "NADA", "RADA", "BADA", "TADA", "Cy3", "Cy5"];
 
     const values = drugs.map(drug => {
       const val = document.getElementById(`predict_${drug}`).value.trim();
@@ -237,10 +314,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    const species = predictSpecies(values);
+    const top3raw = predictTopSpecies(values);
+    if (top3raw.length === 0) {
+      document.getElementById('predictionResult').textContent =
+        "Not enough data to make a prediction.";
+      return;
+    }
 
-    document.getElementById('predictionResult').innerHTML =
-      `Closest match: <em>${species}</em>`;
+    const top3 = computeConfidence(top3raw);
+    const text = buildConfidenceText(top3);
+
+    document.getElementById('predictionResult').textContent = text;
+
+    drawRadarPlot(values, top3raw);
   });
 
   // -----------------------------
