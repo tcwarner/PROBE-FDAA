@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     container.innerHTML = "";
 
     // Use explicit order for compounds
-    const drugs = ["HADA", "NADA", "RADA", "BADA", "TADA", "Cy3", "Cy5"];
+    const drugs = ["HADA", "NADA", "RADA", "488-FDAA", "555-FDAA", "594-FDAA", "647-FDAA"];
 
     drugs.forEach(drug => {
       const row = document.createElement('div');
