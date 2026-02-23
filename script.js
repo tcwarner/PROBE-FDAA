@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 
   let growthTimes = {};
   let tableData = {};
@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let lastRows = [];
   let lastDiffRows = [];
 
+  // -----------------------------
+  // Load JSON data
+  // -----------------------------
   async function loadData() {
     const response = await fetch('data.json');
     const data = await response.json();
@@ -23,12 +26,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // -----------------------------
+  // Build prediction input boxes
+  // -----------------------------
+  function buildPredictionInputs() {
+    const container = document.getElementById('predictInputs');
+    container.innerHTML = "";
+
+    const firstSpecies = Object.keys(tableData)[0];
+    const drugs = Object.keys(tableData[firstSpecies]);
+
+    drugs.forEach(drug => {
+      const row = document.createElement('div');
+      row.style.marginBottom = "8px";
+
+      row.innerHTML = `
+        <label>${drug}:
+          <input type="number" step="0.01" id="predict_${drug}" style="width:120px;">
+        </label>
+      `;
+
+      container.appendChild(row);
+    });
+  }
+
+  // -----------------------------
+  // Convert minutes → H:MM
+  // -----------------------------
   function formatHM(minutes) {
     const h = Math.floor(minutes / 60);
     const m = Math.round(minutes % 60);
     return `${h}h ${m.toString().padStart(2, "0")}m`;
   }
 
+  // -----------------------------
+  // Build table rows + highlighting
+  // -----------------------------
   function buildRows(b1, b2) {
     const drugs = Object.keys(tableData[b1]);
 
@@ -50,13 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const highlight = (foldChange >= 3 || hardHighlight) ? "highlight" : "";
 
-      return {
-        drug,
-        v1,
-        v2,
-        foldChange,
-        highlight
-      };
+      return { drug, v1, v2, foldChange, highlight };
     });
 
     const diffRows = rows.filter(r => r.highlight === "highlight");
@@ -64,6 +91,9 @@ document.addEventListener('DOMContentLoaded', () => {
     return { rows, diffRows };
   }
 
+  // -----------------------------
+  // Render comparison table
+  // -----------------------------
   function renderTable(b1, b2) {
     const resultDiv = document.getElementById('result');
     const toggleBtn = document.getElementById('toggle');
@@ -119,6 +149,9 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleBtn.textContent = showAll ? "Show only differences" : "Show all compounds";
   }
 
+  // -----------------------------
+  // Compare button
+  // -----------------------------
   document.getElementById('submit').addEventListener('click', () => {
     const b1 = document.getElementById('bacteria1').value;
     const b2 = document.getElementById('bacteria2').value;
@@ -139,6 +172,9 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTable(b1, b2);
   });
 
+  // -----------------------------
+  // Toggle button
+  // -----------------------------
   document.getElementById('toggle').addEventListener('click', () => {
     const b1 = document.getElementById('bacteria1').value;
     const b2 = document.getElementById('bacteria2').value;
@@ -147,6 +183,9 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTable(b1, b2);
   });
 
+  // -----------------------------
+  // Species prediction engine
+  // -----------------------------
   function predictSpecies(bindingValues) {
     const speciesList = Object.keys(tableData);
     let bestSpecies = null;
@@ -156,12 +195,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const speciesValues = Object.values(tableData[species]).map(Number);
 
       let sumSq = 0;
+      let count = 0;
+
       for (let i = 0; i < speciesValues.length; i++) {
+        if (bindingValues[i] === null) continue;
+
         const diff = bindingValues[i] - speciesValues[i];
         sumSq += diff * diff;
+        count++;
       }
 
-      const distance = Math.sqrt(sumSq);
+      if (count === 0) return;
+
+      const distance = Math.sqrt(sumSq / count);
 
       if (distance < bestScore) {
         bestScore = distance;
@@ -172,22 +218,22 @@ document.addEventListener('DOMContentLoaded', () => {
     return bestSpecies;
   }
 
+  // -----------------------------
+  // Prediction button
+  // -----------------------------
   document.getElementById('predictBtn').addEventListener('click', () => {
-    const input = document.getElementById('bindingInput').value.trim();
+    const speciesList = Object.keys(tableData);
+    const firstSpecies = speciesList[0];
+    const drugs = Object.keys(tableData[firstSpecies]);
 
-    if (!input) {
+    const values = drugs.map(drug => {
+      const val = document.getElementById(`predict_${drug}`).value.trim();
+      return val === "" ? null : Number(val);
+    });
+
+    if (values.every(v => v === null)) {
       document.getElementById('predictionResult').textContent =
-        "Please enter binding values first.";
-      return;
-    }
-
-    const values = input.split(',').map(v => Number(v.trim()));
-
-    const expectedLength = Object.keys(tableData[Object.keys(tableData)[0]]).length;
-
-    if (values.length !== expectedLength) {
-      document.getElementById('predictionResult').textContent =
-        `Please enter exactly ${expectedLength} values.`;
+        "Please enter at least one binding value.";
       return;
     }
 
@@ -197,6 +243,10 @@ document.addEventListener('DOMContentLoaded', () => {
       `Closest match: <em>${species}</em>`;
   });
 
-  loadData();
+  // -----------------------------
+  // Initialize
+  // -----------------------------
+  await loadData();
+  buildPredictionInputs();
 
 });
