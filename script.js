@@ -6,9 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let lastRows = [];
   let lastDiffRows = [];
 
-  // -----------------------------
-  // Load JSON data
-  // -----------------------------
   async function loadData() {
     const response = await fetch('data.json');
     const data = await response.json();
@@ -26,18 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // -----------------------------
-  // Convert minutes → H:MM
-  // -----------------------------
   function formatHM(minutes) {
     const h = Math.floor(minutes / 60);
     const m = Math.round(minutes % 60);
     return `${h}h ${m.toString().padStart(2, "0")}m`;
   }
 
-  // -----------------------------
-  // Build table rows + highlighting
-  // -----------------------------
   function buildRows(b1, b2) {
     const drugs = Object.keys(tableData[b1]);
 
@@ -50,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const foldChange = minVal === 0 ? Infinity : maxVal / minVal;
 
-      // Updated thresholds
       const lowThreshold = 1.45;
       const highThreshold = 2.2;
 
@@ -69,15 +59,11 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     });
 
-    // Use highlight logic for difference rows
     const diffRows = rows.filter(r => r.highlight === "highlight");
 
     return { rows, diffRows };
   }
 
-  // -----------------------------
-  // Render comparison table
-  // -----------------------------
   function renderTable(b1, b2) {
     const resultDiv = document.getElementById('result');
     const toggleBtn = document.getElementById('toggle');
@@ -94,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
       </p>
     `;
 
-    // Co-culture growth time
     const shorter = Math.min(gt1, gt2);
     const average = (gt1 + gt2) / 2;
     const coCulture = Math.min(2 * shorter, average);
@@ -134,9 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleBtn.textContent = showAll ? "Show only differences" : "Show all compounds";
   }
 
-  // -----------------------------
-  // Compare button
-  // -----------------------------
   document.getElementById('submit').addEventListener('click', () => {
     const b1 = document.getElementById('bacteria1').value;
     const b2 = document.getElementById('bacteria2').value;
@@ -157,9 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTable(b1, b2);
   });
 
-  // -----------------------------
-  // Toggle button
-  // -----------------------------
   document.getElementById('toggle').addEventListener('click', () => {
     const b1 = document.getElementById('bacteria1').value;
     const b2 = document.getElementById('bacteria2').value;
@@ -168,9 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTable(b1, b2);
   });
 
-  // -----------------------------
-  // Species prediction engine
-  // -----------------------------
   function predictSpecies(bindingValues) {
     const speciesList = Object.keys(tableData);
     let bestSpecies = null;
@@ -196,9 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return bestSpecies;
   }
 
-  // -----------------------------
-  // Prediction button
-  // -----------------------------
   document.getElementById('predictBtn').addEventListener('click', () => {
     const input = document.getElementById('bindingInput').value.trim();
 
@@ -224,7 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
       `Closest match: <em>${species}</em>`;
   });
 
-  // Load data on startup
   loadData();
 
 });
