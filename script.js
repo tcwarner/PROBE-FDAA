@@ -161,3 +161,28 @@ function buildRows(b1, b2) {
 
   loadData();
 });
+function predictSpecies(bindingValues) {
+  const speciesList = Object.keys(tableData);
+  let bestSpecies = null;
+  let bestScore = Infinity;
+
+  speciesList.forEach(species => {
+    const speciesValues = Object.values(tableData[species]).map(Number);
+
+    // Compute Euclidean distance
+    let sumSq = 0;
+    for (let i = 0; i < speciesValues.length; i++) {
+      const diff = bindingValues[i] - speciesValues[i];
+      sumSq += diff * diff;
+    }
+
+    const distance = Math.sqrt(sumSq);
+
+    if (distance < bestScore) {
+      bestScore = distance;
+      bestSpecies = species;
+    }
+  });
+
+  return bestSpecies;
+}
