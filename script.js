@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Prediction button
   // -----------------------------
   document.getElementById('predictBtn').addEventListener('click', () => {
-    const drugs = ["HADA", "NADA", "RADA", "BADA", "TADA", "Cy3", "Cy5"];
+    const drugs = ["HADA", "NADA", "RADA", "488-FDAA", "555-FDAA", "594-FDAA", "647-FDAA"];
 
     const values = drugs.map(drug => {
       const val = document.getElementById(`predict_${drug}`).value.trim();
